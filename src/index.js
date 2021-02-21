@@ -31,9 +31,9 @@ const modifyDOM = (
     {2 === 2 && <div>2</div> }
     <span>这是一个被修改过的 span 标签</span>
     <button onClick={ () => alert(666) }>按钮</button>
-    <h3>将会被删除</h3>
-    文本内容
-    <input type="text" value="123"/>
+    <h6>将会被删除</h6>
+    {/* 文本内容
+    <input type="text" value="123"/> */}
   </div>
 )
 
