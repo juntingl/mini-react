@@ -20,10 +20,10 @@ const virtualDOM = (
 )
 
 // MiniReact.render(virtualDOM, document.querySelector('#root'));
-function Demo () {
+function Demo (props) {
   return (
     <div>
-      Demo
+      Demo {props.title}
       <Heart/>
     </div>
   )
@@ -31,8 +31,7 @@ function Demo () {
 function Heart() {
   return <div>&hearts;</div>
 }
-MiniReact.render(<Demo />, document.querySelector('#root'));
-
+MiniReact.render(<Demo title="Hello React!" />, document.querySelector('#root'));
 
 const $pre = document.createElement('pre');
 $pre.textContent = JSON.stringify(virtualDOM, null, 2)

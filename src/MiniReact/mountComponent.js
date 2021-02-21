@@ -21,5 +21,6 @@ export default function mountComponent(virtualDOM, container) {
 }
 
 function buildFunctionComponent(virtualDOM) {
-  return virtualDOM.type()
+  // 组件 Props 传递
+  return virtualDOM.type(virtualDOM.props || {})
 }
