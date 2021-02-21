@@ -30,6 +30,6 @@ function buildFunctionComponent(virtualDOM) {
 }
 
 function buildClassComponent(virtualDOM) {
-  const component = new virtualDOM.type()
+  const component = new virtualDOM.type(virtualDOM.props || {})
   return component.render()
 }
