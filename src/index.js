@@ -31,7 +31,24 @@ function Demo (props) {
 function Heart() {
   return <div>&hearts;</div>
 }
-MiniReact.render(<Demo title="Hello React!" />, document.querySelector('#root'));
+// MiniReact.render(<Demo title="Hello React!" />, document.querySelector('#root'))
+
+// 类组件
+class Alert extends MiniReact.Component {
+  constructor (props) {
+    super(props)
+  }
+  render() {
+    return (
+      <div>
+        React Class Component
+        {this.props.title}
+      </div>
+    )
+  }
+}
+MiniReact.render(<Alert title="Hello React!" />, document.querySelector('#root'))
+
 
 const $pre = document.createElement('pre');
 $pre.textContent = JSON.stringify(virtualDOM, null, 2)
