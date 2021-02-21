@@ -15,7 +15,7 @@ const virtualDOM = (
     <button onClick={(e) => console.log(e) }>按钮</button>
     <h3>将会被删除</h3>
     文本内容
-    <input type="text"/>
+    <input type="text" value="666"/>
   </div>
 )
 
