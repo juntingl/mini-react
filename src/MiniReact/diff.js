@@ -3,9 +3,10 @@
  * @Author: Junting
  * @Date: 2021-02-21 13:01:28
  * @Last Modified by: Junting
- * @Last Modified time: 2021-02-21 16:10:17
+ * @Last Modified time: 2021-02-21 16:51:59
  */
 import mountElement from './mountElement';
+import updateNodeElement from './updateNodeElement';
 import updateTextNode from './updateTextNode';
 
 // oldDOM = container.firstChild
@@ -21,6 +22,7 @@ export default function diff(virtualDOM, container, oldDOM) {
       updateTextNode(virtualDOM, oldVirtualDOM, oldDOM)
     } else {
       // 更新元素属性
+      updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
     }
 
     // 递归对比子元素节点
