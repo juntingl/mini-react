@@ -19,11 +19,16 @@ const virtualDOM = (
   </div>
 )
 
-MiniReact.render(virtualDOM, document.querySelector('#root'));
+// MiniReact.render(virtualDOM, document.querySelector('#root'));
+
+function Heart() {
+  return <div>&hearts;</div>
+}
+MiniReact.render(<Heart />, document.querySelector('#root'));
+
 
 const $pre = document.createElement('pre');
 $pre.textContent = JSON.stringify(virtualDOM, null, 2)
-
 document.querySelector('body').append(
   $pre
 )
