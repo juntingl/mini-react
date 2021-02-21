@@ -3,7 +3,7 @@
  * @Author: Junting
  * @Date: 2021-02-21 12:56:06
  * @Last Modified by: Junting
- * @Last Modified time: 2021-02-21 14:15:05
+ * @Last Modified time: 2021-02-21 16:09:56
  */
 import diff from './diff';
 
@@ -14,7 +14,7 @@ import diff from './diff';
  * @param {DOM} container 元素节点
  * @param {DOM} oldDOM 更新前的旧 DOM
  */
-export default function render (virtualDOM, container, oldDOM) {
+export default function render (virtualDOM, container, oldDOM = container.firstChild) {
   // 比对
   diff(virtualDOM, container, oldDOM)
 

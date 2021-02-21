@@ -11,6 +11,8 @@ export default function createDOMElement(virtualDOM) {
     newElement = document.createElement(virtualDOM.type)
     updateNodeElement(newElement, virtualDOM)
   }
+  newElement._virtualDOM = virtualDOM
+
   // 递归创建子节点
   virtualDOM.children.forEach(child => {
     // 不确定 child 是 组件还是普通元素
