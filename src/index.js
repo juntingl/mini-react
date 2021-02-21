@@ -21,7 +21,7 @@ const virtualDOM = (
 const modifyDOM = (
   <div className="container">
     <h1>你好，Mini React</h1>
-    <h2 >(实现 Virtual DOM)</h2>
+    <h2 data-test="test666">(实现 Virtual DOM)</h2>
     <div>
       嵌套1 <div>嵌套1.1</div>
     </div>
@@ -30,7 +30,7 @@ const modifyDOM = (
     {2 === 1 && <div>如果1和2相等，渲染当前内容</div> }
     {2 === 2 && <div>2</div> }
     <span>这是一个被修改过的 span 标签</span>
-    <button >按钮</button>
+    <button onClick={ () => alert(666) }>按钮</button>
     <h3>将会被删除</h3>
     文本内容
     <input type="text" value="123"/>

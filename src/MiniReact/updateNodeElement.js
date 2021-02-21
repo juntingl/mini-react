@@ -22,7 +22,7 @@ export default function updateNodeElement (newElement, virtualDOM, oldVirtualDOM
         newElement.addEventListener(eventName, newPropsValue)
         // 旧事件存在需要进行移除
         if (oldPropsValue) {
-          newElement.removeEventListener(eventName, newPropsValue)
+          newElement.removeEventListener(eventName, oldPropsValue)
         }
       } else if (propName === 'value' || propName === 'checked') {
         newElement[propName] = newPropsValue
