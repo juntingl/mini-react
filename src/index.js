@@ -86,12 +86,21 @@ class Alert extends MiniReact.Component {
       </div>
     )
   }
+  componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps', nextProps);
+  }
+  componentWillUpdate() {
+    console.log('componentWillUpdate');
+  }
+  componentDidUpdate() {
+    console.log('componentDidUpdate');
+  }
 }
 MiniReact.render(<Alert title="Hello React!" />, document.querySelector('#root'))
 // 组件更新
 setTimeout(() => {
-  // MiniReact.render(<Alert title="React Component Alert" />, document.querySelector('#root'))
-  MiniReact.render(<Heart title="React Component Alert" />, document.querySelector('#root'))
+  MiniReact.render(<Alert title="/nReact Component Alert/n" />, document.querySelector('#root'))
+  // MiniReact.render(<Heart title="React Component Alert" />, document.querySelector('#root'))
 }, 2000);
 
 
