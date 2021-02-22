@@ -37,11 +37,13 @@ const modifyDOM = (
   </div>
 )
 
-MiniReact.render(virtualDOM, document.querySelector('#root'));
+// MiniReact.render(virtualDOM, document.querySelector('#root'));
 
-setTimeout(() => {
-  MiniReact.render(modifyDOM, document.querySelector('#root'));
-}, 2000);
+// setTimeout(() => {
+//   MiniReact.render(modifyDOM, document.querySelector('#root'));
+// }, 2000);
+
+/*----------------------------------------------------------------*/
 
 function Demo (props) {
   return (
@@ -56,21 +58,41 @@ function Heart() {
 }
 // MiniReact.render(<Demo title="Hello React!" />, document.querySelector('#root'))
 
+/*----------------------------------------------------------------*/
+
 // 类组件
 class Alert extends MiniReact.Component {
   constructor (props) {
     super(props)
+    this.state = {
+      title: 'Alert title'
+    }
+    this.changeTitle = this.changeTitle.bind(this)
+  }
+  changeTitle () {
+    this.setState({
+      title: 'Changed Alert Title'
+    })
   }
   render() {
+    console.log('state 改变后：', this.state)
     return (
       <div>
         React Class Component
         {this.props.title}
+        <br/>
+        {this.state.title}
+        <button onClick={this.changeTitle}>Change Title</button>
       </div>
     )
   }
 }
-// MiniReact.render(<Alert title="Hello React!" />, document.querySelector('#root'))
+MiniReact.render(<Alert title="Hello React!" />, document.querySelector('#root'))
+// 组件更新
+setTimeout(() => {
+  // MiniReact.render(<Alert title="React Component Alert" />, document.querySelector('#root'))
+  MiniReact.render(<Heart title="React Component Alert" />, document.querySelector('#root'))
+}, 2000);
 
 
 // const $pre = document.createElement('pre');

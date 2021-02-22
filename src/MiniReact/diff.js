@@ -3,18 +3,20 @@
  * @Author: Junting
  * @Date: 2021-02-21 13:01:28
  * @Last Modified by: Junting
- * @Last Modified time: 2021-02-21 18:08:18
+ * @Last Modified time: 2021-02-22 21:53:25
  */
 import mountElement from './mountElement';
 import updateNodeElement from './updateNodeElement';
 import updateTextNode from './updateTextNode';
 import createDOMElement from './createDOMElement';
 import unmountNode from './unmountNode';
+import diffComponent from './diffComponent'
 
 // oldDOM = container.firstChild
 export default function diff(virtualDOM, container, oldDOM) {
-  const oldVirtualDOM = oldDOM && oldDOM._virtualDOM;
-
+  const oldVirtualDOM = oldDOM && oldDOM._virtualDOM
+  // 如果是类组件，类组件就挂载了 component 属性
+  const oldComponent = oldVirtualDOM && oldVirtualDOM.component
   // 判断 oldDOM 是否存在
   if(!oldDOM) {
     mountElement(virtualDOM, container)
@@ -27,6 +29,9 @@ export default function diff(virtualDOM, container, oldDOM) {
     const newElement = createDOMElement(virtualDOM)
     // 用新创建的 DOM 对象替换旧的 DOM 对象
     oldDOM.parentNode.replaceChild(newElement, oldDOM)
+  } else if (typeof virtualDOM.type === 'function') {
+    // 组件
+    diffComponent(virtualDOM, oldComponent, oldDOM, container)
   } else if (oldVirtualDOM && virtualDOM.type === oldVirtualDOM.type) {
     if (virtualDOM.type === 'text') {
       // 更新内容
