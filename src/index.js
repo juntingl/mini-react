@@ -124,6 +124,9 @@ class DemoRef extends MiniReact.Component {
   componentDidMount() {
     console.log('componentDidMount');
   }
+  componentWillUnmount() {
+    console.log('componentWillUnmount');
+  }
 }
 // MiniReact.render(<DemoRef title="Hello React!" />, document.querySelector('#root'))
 
@@ -172,7 +175,9 @@ class KeyDome extends MiniReact.Component {
       <div>
         <ul>
           {this.state.person.map(person => (
-            <li key={person.id}>{person.name} - {person.age}</li>
+            <li key={person.id}>{person.name} - {person.age}
+            <DemoRef></DemoRef>
+            </li>
           ))}
         </ul>
         <button onClick={this.handleClick}>点击</button>
