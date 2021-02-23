@@ -3,7 +3,7 @@
  * @Author: Junting
  * @Date: 2021-02-21 13:01:28
  * @Last Modified by: Junting
- * @Last Modified time: 2021-02-22 21:53:25
+ * @Last Modified time: 2021-02-23 20:30:29
  */
 import mountElement from './mountElement';
 import updateNodeElement from './updateNodeElement';
@@ -33,6 +33,7 @@ export default function diff(virtualDOM, container, oldDOM) {
     // 组件
     diffComponent(virtualDOM, oldComponent, oldDOM, container)
   } else if (oldVirtualDOM && virtualDOM.type === oldVirtualDOM.type) {
+    // 类型相同
     if (virtualDOM.type === 'text') {
       // 更新内容
       updateTextNode(virtualDOM, oldVirtualDOM, oldDOM)
@@ -41,10 +42,44 @@ export default function diff(virtualDOM, container, oldDOM) {
       updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
     }
 
-    // 递归对比子元素节点
-    virtualDOM.children.forEach((child, index) => {
-      diff(child, oldDOM, oldDOM.childNodes[index])
-    })
+    // 1. 将拥有 key 属性的子元素存储到一个对象中
+    let keyedElements = {}
+    for (let i = 0; i < oldDOM.childNodes.length; i++) {
+      let domElement = oldDOM.childNodes[i]
+
+      // 判断是否是元素节点
+      if (domElement.nodeType === 1) {
+        let key = domElement.getAttribute('key')
+        if(key) {
+          keyedElements[key] = domElement
+        }
+      }
+    }
+
+    let hasNoKey = Object.keys(keyedElements).length === 0
+
+    // 对比子节点
+    // 区分带 key 和 不带 key
+    if (hasNoKey) {
+      // 递归对比子元素节点
+      virtualDOM.children.forEach((child, index) => {
+        diff(child, oldDOM, oldDOM.childNodes[index])
+      })
+    } else {
+      // 2. 循环 virtual DOM 的子元素，获取子元素的 key 属性
+      virtualDOM.children.forEach((child, i) => {
+        let key = child.props.key
+        if (key) {
+          let domElement = keyedElements[key]
+          if (domElement) {
+            // 3. 看看当前位置的元素是不是我们期望的元素
+            if (oldDOM.childNodes[i] &&  oldDOM.childNodes[i] !== domElement) {
+              oldDOM.insertBefore(domElement,  oldDOM.childNodes[i])
+            }
+          }
+        }
+      })
+    }
 
     // 删除节点
     // 获取节点的数量

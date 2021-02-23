@@ -125,8 +125,64 @@ class DemoRef extends MiniReact.Component {
     console.log('componentDidMount');
   }
 }
-MiniReact.render(<DemoRef title="Hello React!" />, document.querySelector('#root'))
+// MiniReact.render(<DemoRef title="Hello React!" />, document.querySelector('#root'))
 
+
+/*----------------------------------------------------------------*/
+// Key
+class KeyDome extends MiniReact.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      person: [
+        {
+          id: 1,
+          name: 'Bob',
+          age: 18
+        },
+        {
+          id: 2,
+          name: 'Joy',
+          age: 18
+        },
+        {
+          id: 3,
+          name: 'Hey',
+          age: 16
+        },
+        {
+          id: 4,
+          name: 'Jack',
+          age: 18
+        },
+      ]
+    }
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick() {
+    const newState = JSON.parse(JSON.stringify(this.state))
+    newState.person.push(newState.person.shift())
+    this.setState(newState)
+  }
+  render () {
+    return (
+      <div>
+        <ul>
+          {this.state.person.map(person => (
+            <li key={person.id}>{person.name} - {person.age}</li>
+          ))}
+        </ul>
+        <button onClick={this.handleClick}>点击</button>
+      </div>
+    )
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount');
+  }
+}
+MiniReact.render(<KeyDome title="Hello React!" />, document.querySelector('#root'))
 
 // const $pre = document.createElement('pre');
 // $pre.textContent = JSON.stringify(virtualDOM, null, 2)
