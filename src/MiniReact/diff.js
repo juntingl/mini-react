@@ -3,7 +3,7 @@
  * @Author: Junting
  * @Date: 2021-02-21 13:01:28
  * @Last Modified by: Junting
- * @Last Modified time: 2021-02-23 20:30:29
+ * @Last Modified time: 2021-02-23 21:49:11
  */
 import mountElement from './mountElement';
 import updateNodeElement from './updateNodeElement';
@@ -73,9 +73,12 @@ export default function diff(virtualDOM, container, oldDOM) {
           let domElement = keyedElements[key]
           if (domElement) {
             // 3. 看看当前位置的元素是不是我们期望的元素
-            if (oldDOM.childNodes[i] &&  oldDOM.childNodes[i] !== domElement) {
-              oldDOM.insertBefore(domElement,  oldDOM.childNodes[i])
+            if (oldDOM.childNodes[i] && oldDOM.childNodes[i] !== domElement) {
+              oldDOM.insertBefore(domElement, oldDOM.childNodes[i])
             }
+          } else {
+            // 新增元素
+            mountElement(child, oldDOM, oldDOM.childNodes[i])
           }
         }
       })
@@ -86,8 +89,30 @@ export default function diff(virtualDOM, container, oldDOM) {
     let oldChildNodes = oldDOM.childNodes
     // 如果旧节点的数量多于要渲染的新节点的长度
     if (oldChildNodes.length > virtualDOM.children.length) {
-      for (let i = oldChildNodes.length - 1; i > virtualDOM.children.length - 1; i--) {
-        unmountNode(oldChildNodes[i])
+      // 区分是否携带 key 属性，调用不同处理逻辑
+      if (hasNoKey) {
+        // 删除节点
+        for (let i = oldChildNodes.length - 1; i > virtualDOM.children.length - 1; i--) {
+          unmountNode(oldChildNodes[i])
+        }
+      } else {
+        // 通过 key 属性删除节点
+        for(let i = 0; i < oldChildNodes.length; i++) {
+          let oldChild = oldChildNodes[i]
+          let oldChildKey = oldChild._virtualDOM.props.key
+          let found = false
+
+          for (let n = 0; n < virtualDOM.children.length; n++) {
+            if (oldChildKey === virtualDOM.children[n].props.key) {
+              found = true
+              break
+            }
+          }
+
+          if (!found) {
+            unmountNode(oldChild)
+          }
+        }
       }
     }
   }

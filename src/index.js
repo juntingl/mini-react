@@ -162,7 +162,9 @@ class KeyDome extends MiniReact.Component {
 
   handleClick() {
     const newState = JSON.parse(JSON.stringify(this.state))
-    newState.person.push(newState.person.shift())
+    // newState.person.push(newState.person.shift())
+    // newState.person.splice(1, 0, { id: 5, name: 'Junting', age: 20 })
+    newState.person.pop()
     this.setState(newState)
   }
   render () {
