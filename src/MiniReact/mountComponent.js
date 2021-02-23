@@ -8,6 +8,7 @@ import mountNativeElement from './mountNativeElement';
  */
 export default function mountComponent(virtualDOM, container, oldDOM) {
   let nextVirtualDOM = null
+  let component = null
   // 判断组件是类组件还是函数组件
   if (isFunctionComponent(virtualDOM)) {
     // 函数组件
@@ -15,12 +16,21 @@ export default function mountComponent(virtualDOM, container, oldDOM) {
   } else {
     // 类组件
     nextVirtualDOM = buildClassComponent(virtualDOM)
+    component = nextVirtualDOM.component
   }
 
   if (isFunction(nextVirtualDOM)) {
     mountComponent(nextVirtualDOM, container)
   } else {
     mountNativeElement(nextVirtualDOM, container, oldDOM)
+  }
+
+  // 类组件 ref 属性处理逻辑
+  if (component) {
+    component.componentDidMount()
+    if (component.props && component.props.ref) {
+      component.props.ref(component)
+    }
   }
 }
 

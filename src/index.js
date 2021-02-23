@@ -96,12 +96,36 @@ class Alert extends MiniReact.Component {
     console.log('componentDidUpdate');
   }
 }
-MiniReact.render(<Alert title="Hello React!" />, document.querySelector('#root'))
-// 组件更新
-setTimeout(() => {
-  MiniReact.render(<Alert title="/nReact Component Alert/n" />, document.querySelector('#root'))
-  // MiniReact.render(<Heart title="React Component Alert" />, document.querySelector('#root'))
-}, 2000);
+// MiniReact.render(<Alert title="Hello React!" />, document.querySelector('#root'))
+// // 组件更新
+// setTimeout(() => {
+//   MiniReact.render(<Alert title="/nReact Component Alert/n" />, document.querySelector('#root'))
+//   // MiniReact.render(<Heart title="React Component Alert" />, document.querySelector('#root'))
+// }, 2000);
+
+/*----------------------------------------------------------------*/
+// ref 属性
+class DemoRef extends MiniReact.Component {
+  handle() {
+    let value = this.input.value
+    console.log(value)
+    console.log('Alert Ref:', this.alert);
+  }
+  render () {
+    return (
+      <div>
+        <input	type="text" ref={ input => (this.input = input) }/>
+        <button onClick={this.handle.bind(this)}>点击</button>
+        <Alert ref={alert => this.alert = alert} title=" Alert"/>
+      </div>
+    )
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount');
+  }
+}
+MiniReact.render(<DemoRef title="Hello React!" />, document.querySelector('#root'))
 
 
 // const $pre = document.createElement('pre');
