@@ -1,5 +1,5 @@
-import ReactDOM from './core/react-dom.js';
-import App from './app.js';
+import ReactDOM from '../core/react-dom.js';
+import App from './app.jsx';
 
 // 定义 VDOM JSON
 // const el = {
@@ -19,6 +19,5 @@ import App from './app.js';
 //     ]
 //   },
 // };
-
 const root = document.querySelector("#root");
 ReactDOM.createRoot(root).render(App);
