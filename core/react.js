@@ -1,5 +1,5 @@
 function render(el, container) {
-  nextWorkUnit = {
+  nextFiberUnit = {
     dom: container,
     props: {
       children: [el],
@@ -45,69 +45,75 @@ function createTextNode(text) {
   }
 }
 
-let nextWorkUnit = null;
-function workLoop(deadline) {
-  let shouldYield = false
-  while(!shouldYield && nextWorkUnit) {
-    nextWorkUnit = preformWorkOfUnit(nextWorkUnit);
-
-    shouldYield = deadline.timeRemaining() < 1;
-  }
-  requestIdleCallback(workLoop);
+function createDOM(type) {
+  return type === 'TEXT_NODE'
+    ? document.createTextNode("")
+    : document.createElement(type);
 }
 
-requestIdleCallback(workLoop);
-
-function preformWorkOfUnit(work) {
-  if (!work.dom) {
-    // 1. 创建 DOM
-    const dom = (work.dom =
-      work.type === 'TEXT_NODE'
-        ? document.createTextNode("")
-        : document.createElement(work.type));
-
-    work.parent.dom.append(dom);
-
-    // 2. 处理 props
-    Object.keys(work.props)
+function updateProps(dom, props) {
+  Object.keys(props)
     .forEach((key) => {
       if (key !== 'children') {
-        dom[key] = work.props[key];
+        dom[key] = props[key];
       }
     });
-  }
+}
 
-  // 3. 转换链表
+function initChildren(fiber) {
   let prevChild = null;
-  work.props.children.forEach((child, index) => {
-    const newWork = {
+  fiber.props.children.forEach((child, index) => {
+    const newFiber = {
       type: child.type,
       props: child.props,
       child: null,
-      parent: work,
+      parent: fiber,
       sibling: null,
       dom: null
     };
 
     if (index === 0) {
-      work.child = newWork;
+      fiber.child = newFiber;
     } else {
-      prevChild.sibling = newWork;
+      prevChild.sibling = newFiber;
     }
-    prevChild = newWork;
-  })
-  // 4. 返回下一个执行任务
-  if (work.child) {
-    return work.child;
-  }
-
-  if (work.sibling) {
-    return work.sibling;
-  }
-
-  return work.parent?.sibling;
+    prevChild = newFiber;
+  });
 }
 
+let nextFiberUnit = null;
+function fiberLoop(deadline) {
+  let shouldYield = false
+  while(!shouldYield && nextFiberUnit) {
+    nextFiberUnit = preformFiberOfUnit(nextFiberUnit);
+
+    shouldYield = deadline.timeRemaining() < 1;
+  }
+  requestIdleCallback(fiberLoop);
+}
+
+requestIdleCallback(fiberLoop);
+
+function preformFiberOfUnit(fiber) {
+  if (!fiber.dom) {
+    const dom = (fiber.dom = createDOM(fiber.type));
+    fiber.parent.dom.append(dom);
+    updateProps(dom, fiber.props);
+  }
+
+  // 3. 转换链表
+  initChildren(fiber);
+  // 4. 返回下一个执行任务
+  if (fiber.child) {
+    return fiber.child;
+  }
+
+  if (fiber.sibling) {
+    return fiber.sibling;
+  }
+
+  return fiber.parent?.sibling;
+}
 
 export default {
   render,
