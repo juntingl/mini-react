@@ -38,18 +38,29 @@ function commitWork(fiber) {
   commitWork(fiber.sibling);
 }
 
+function updateFunctionComponent(fiber) {
+  const children = [fiber.type(fiber.props)];
+  initChildren(fiber, children);
+}
+
+function updateHostComponent(fiber) {
+  if (!fiber.dom) {
+    const dom = (fiber.dom = createDOM(fiber.type));
+    updateProps(dom, fiber.props);
+  }
+  const children = fiber.props.children;
+  initChildren(fiber, children);
+}
+
 function preformFiberOfUnit(fiber) {
   const isFunctionComponent = typeof fiber.type === "function";
 
-  if (!isFunctionComponent) {
-    if (!fiber.dom) {
-      const dom = (fiber.dom = createDOM(fiber.type));
-      updateProps(dom, fiber.props);
-    }
+  if (isFunctionComponent) {
+    updateFunctionComponent(fiber)
+  } else {
+    updateHostComponent(fiber)
   }
-  // 3. 转换链表
-  const children = isFunctionComponent ? [fiber.type(fiber.props)] : fiber.props.children;
-  initChildren(fiber, children);
+
   // 4. 返回下一个执行任务
   if (fiber.child) {
     return fiber.child;
