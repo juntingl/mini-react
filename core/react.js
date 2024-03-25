@@ -1,3 +1,67 @@
+
+let root = null;
+let nextFiberUnit = null;
+function fiberLoop(deadline) {
+  let shouldYield = false
+  while(!shouldYield && nextFiberUnit) {
+    nextFiberUnit = preformFiberOfUnit(nextFiberUnit);
+
+    shouldYield = deadline.timeRemaining() < 1;
+  }
+
+  if (!nextFiberUnit && root) {
+    commitRoot();
+  }
+
+  requestIdleCallback(fiberLoop);
+}
+
+requestIdleCallback(fiberLoop);
+
+function commitRoot () {
+  commitWork(root.child);
+  root = null; // 只添加一次
+}
+
+function commitWork(fiber) {
+  if (!fiber) return
+
+  let fiberParent = fiber.parent;
+  while (!fiberParent.dom) {
+    fiberParent = fiberParent.parent;
+  }
+
+  if (fiber.dom) {
+    fiberParent.dom.append(fiber.dom);
+  }
+  commitWork(fiber.child);
+  commitWork(fiber.sibling);
+}
+
+function preformFiberOfUnit(fiber) {
+  const isFunctionComponent = typeof fiber.type === "function";
+
+  if (!isFunctionComponent) {
+    if (!fiber.dom) {
+      const dom = (fiber.dom = createDOM(fiber.type));
+      updateProps(dom, fiber.props);
+    }
+  }
+  // 3. 转换链表
+  const children = isFunctionComponent ? [fiber.type(fiber.props)] : fiber.props.children;
+  initChildren(fiber, children);
+  // 4. 返回下一个执行任务
+  if (fiber.child) {
+    return fiber.child;
+  }
+
+  let nextFiber = fiber;
+  while(nextFiber) {
+    if (nextFiber.sibling) return nextFiber.sibling;
+    nextFiber = nextFiber.parent;
+  }
+}
+
 function render(el, container) {
   nextFiberUnit = {
     dom: container,
@@ -5,23 +69,7 @@ function render(el, container) {
       children: [el],
     }
   };
-
-  // const dom = el.type === 'TEXT_NODE'
-  //   ? document.createTextNode("")
-  //   : document.createElement(el.type);
-
-  // Object.keys(el.props)
-  //   .forEach((key) => {
-  //     if (key !== 'children') {
-  //       dom[key] = el.props[key];
-  //     }
-  //   })
-
-  // el.props.children.forEach((child) => {
-  //   render(child, dom);
-  // })
-
-  // container.append(dom);
+  root = nextFiberUnit;
 }
 
 function createElement(type, props, ...children) {
@@ -30,7 +78,8 @@ function createElement(type, props, ...children) {
     props: {
       ...props,
       children: children.map((child) => {
-        return typeof child === "string" ? createTextNode(child) : child;
+        const isTextNode = typeof child === 'string' || typeof child === 'number';
+        return isTextNode ? createTextNode(child) : child;
       })
     }
   }
@@ -60,9 +109,9 @@ function updateProps(dom, props) {
     });
 }
 
-function initChildren(fiber) {
+function initChildren(fiber, children) {
   let prevChild = null;
-  fiber.props.children.forEach((child, index) => {
+  children.forEach((child, index) => {
     const newFiber = {
       type: child.type,
       props: child.props,
@@ -79,40 +128,6 @@ function initChildren(fiber) {
     }
     prevChild = newFiber;
   });
-}
-
-let nextFiberUnit = null;
-function fiberLoop(deadline) {
-  let shouldYield = false
-  while(!shouldYield && nextFiberUnit) {
-    nextFiberUnit = preformFiberOfUnit(nextFiberUnit);
-
-    shouldYield = deadline.timeRemaining() < 1;
-  }
-  requestIdleCallback(fiberLoop);
-}
-
-requestIdleCallback(fiberLoop);
-
-function preformFiberOfUnit(fiber) {
-  if (!fiber.dom) {
-    const dom = (fiber.dom = createDOM(fiber.type));
-    fiber.parent.dom.append(dom);
-    updateProps(dom, fiber.props);
-  }
-
-  // 3. 转换链表
-  initChildren(fiber);
-  // 4. 返回下一个执行任务
-  if (fiber.child) {
-    return fiber.child;
-  }
-
-  if (fiber.sibling) {
-    return fiber.sibling;
-  }
-
-  return fiber.parent?.sibling;
 }
 
 export default {

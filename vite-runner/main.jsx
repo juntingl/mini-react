@@ -1,3 +1,4 @@
+import React from '../core/react.js';
 import ReactDOM from '../core/react-dom.js';
 import App from './app.jsx';
 
@@ -20,4 +21,4 @@ import App from './app.jsx';
 //   },
 // };
 const root = document.querySelector("#root");
-ReactDOM.createRoot(root).render(App);
+ReactDOM.createRoot(root).render(<App />);
