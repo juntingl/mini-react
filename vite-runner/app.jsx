@@ -15,12 +15,16 @@ function CounterContainer () {
 }
 
 function APP () {
+  const handleClick = (event) => {
+    console.log("Click:", event.target);
+  }
   return (
     <div className="app">
       APP
       <Counter num={10}></Counter>
       <Counter num={20}></Counter>
       <CounterContainer></CounterContainer>
+      <button onClick={handleClick}>点我</button>
     </div>
   );
 }
