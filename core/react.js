@@ -1,5 +1,5 @@
 
-let root = null;
+let wipRoot = null; // work in progress
 let currentRoot = null;
 let nextWorkUnit = null;
 function fiberLoop(deadline) {
@@ -10,7 +10,7 @@ function fiberLoop(deadline) {
     shouldYield = deadline.timeRemaining() < 1;
   }
 
-  if (!nextWorkUnit && root) {
+  if (!nextWorkUnit && wipRoot) {
     commitRoot();
   }
 
@@ -20,18 +20,18 @@ function fiberLoop(deadline) {
 requestIdleCallback(fiberLoop);
 
 function update() {
-  nextWorkUnit = {
+  wipRoot = {
     dom: currentRoot.dom,
     props: currentRoot.props,
     alternate: currentRoot
   };
-  root = nextWorkUnit;
+  nextWorkUnit = wipRoot;
 }
 
 function commitRoot () {
-  commitWork(root.child);
-  currentRoot = root;
-  root = null; // 只添加一次
+  commitWork(wipRoot.child);
+  currentRoot = wipRoot;
+  wipRoot = null; // 只添加一次
 }
 
 function commitWork(fiber) {
@@ -56,7 +56,7 @@ function commitWork(fiber) {
 
 function updateFunctionComponent(fiber) {
   const children = [fiber.type(fiber.props)];
-  initChildren(fiber, children);
+  reconcileChildren(fiber, children);
 }
 
 function updateHostComponent(fiber) {
@@ -65,7 +65,7 @@ function updateHostComponent(fiber) {
     updateProps(dom, fiber.props, {});
   }
   const children = fiber.props.children;
-  initChildren(fiber, children);
+  reconcileChildren(fiber, children);
 }
 
 function preformWorkOfUnit(fiber) {
@@ -90,13 +90,13 @@ function preformWorkOfUnit(fiber) {
 }
 
 function render(el, container) {
-  nextWorkUnit = {
+  wipRoot = {
     dom: container,
     props: {
       children: [el],
     }
   };
-  root = nextWorkUnit;
+  nextWorkUnit = wipRoot;
 }
 
 function createElement(type, props, ...children) {
@@ -155,7 +155,7 @@ function updateProps(dom, nextProps, prevProps) {
     })
 }
 
-function initChildren(fiber, children) {
+function reconcileChildren(fiber, children) {
   let oldFiber = fiber.alternate?.child;
   let prevChild = null;
   children.forEach((child, index) => {
