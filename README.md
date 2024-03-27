@@ -32,4 +32,9 @@ React implementation principle, a basic version.
 
 ## The fourth day
 
-添加绑定事件，规则：“on + 事件方式（click）”, props 中将其捞出来，绑定到真实 DOM 上。
+* 添加绑定事件，规则：“on + 事件方式（click）”, props 中将其捞出来，绑定到真实 DOM 上。
+* 更新 props
+  * 对比新老 DOM tree，寻找差异？
+  * 新 dom 树如何获得
+    * 之前代码逻辑是构建完整 DOM 后，最后再去渲染，这个时候可以获得当前整个 DOM 树。
+  *
