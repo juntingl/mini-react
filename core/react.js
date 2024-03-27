@@ -1,15 +1,15 @@
 
 let root = null;
-let nextFiberUnit = null;
+let nextWorkUnit = null;
 function fiberLoop(deadline) {
   let shouldYield = false
-  while(!shouldYield && nextFiberUnit) {
-    nextFiberUnit = preformFiberOfUnit(nextFiberUnit);
+  while(!shouldYield && nextWorkUnit) {
+    nextWorkUnit = preformWorkOfUnit(nextWorkUnit);
 
     shouldYield = deadline.timeRemaining() < 1;
   }
 
-  if (!nextFiberUnit && root) {
+  if (!nextWorkUnit && root) {
     commitRoot();
   }
 
@@ -52,7 +52,7 @@ function updateHostComponent(fiber) {
   initChildren(fiber, children);
 }
 
-function preformFiberOfUnit(fiber) {
+function preformWorkOfUnit(fiber) {
   const isFunctionComponent = typeof fiber.type === "function";
 
   if (isFunctionComponent) {
@@ -74,13 +74,13 @@ function preformFiberOfUnit(fiber) {
 }
 
 function render(el, container) {
-  nextFiberUnit = {
+  nextWorkUnit = {
     dom: container,
     props: {
       children: [el],
     }
   };
-  root = nextFiberUnit;
+  root = nextWorkUnit;
 }
 
 function createElement(type, props, ...children) {
