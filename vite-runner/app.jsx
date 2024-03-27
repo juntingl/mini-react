@@ -26,8 +26,8 @@ function APP () {
   return (
     <div className="app">
       APP: {count}
-      {/* <Counter num={count}></Counter>
-      <Counter num={count}></Counter> */}
+      <Counter num={count}></Counter>
+      <Counter num={count}></Counter>
       <CounterContainer></CounterContainer>
       <button onClick={handleClick}>点我</button>
     </div>

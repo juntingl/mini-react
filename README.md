@@ -37,4 +37,8 @@ React implementation principle, a basic version.
   * 对比新老 DOM tree，寻找差异？
   * 新 dom 树如何获得
     * 之前代码逻辑是构建完整 DOM 后，最后再去渲染，这个时候可以获得当前整个 DOM 树。
-  *
+  * 构建链表时，新老节点相互关联上，使之对比更轻松
+* 问题
+  * count 作为 props 传递给 Counter 组件时
+  * React.update() 去更新，会出现“Cannot set properties of null (setting 'num')”
+    * updateProps 时，fiber.dom 会出现 null 的情况
